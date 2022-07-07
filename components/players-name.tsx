@@ -1,5 +1,6 @@
 import React, { ChangeEvent, Dispatch, useState } from "react";
 import { TextInput, PasswordInput, Tooltip } from "@mantine/core";
+import { sleep } from "../utils";
 
 interface PlayersNameProps {
   firstPlayerName: string;
@@ -16,7 +17,7 @@ interface PlayerNameProps {
 }
 
 const PlayerName = (props: PlayerNameProps) => {
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     props.setValue(e.target.value);
   };
@@ -63,7 +64,7 @@ export function PlayersName(props: PlayersNameProps) {
             <div>
               <button
                 type="submit"
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
                   props.goToNext();
                 }}

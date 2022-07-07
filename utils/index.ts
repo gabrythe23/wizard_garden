@@ -33,4 +33,7 @@ export const range = (start: number, end: number, step = 1): number[] => {
   return result;
 };
 
+export const sleep = async (ms: number) =>
+  await new Promise((r) => setTimeout(r, ms));
+
 export {};
