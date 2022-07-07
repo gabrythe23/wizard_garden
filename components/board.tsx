@@ -1,7 +1,9 @@
 import { Alert, Grid, Modal } from "@mantine/core";
-import React, { useState } from "react";
+import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { AlertCircle } from "tabler-icons-react";
 import { range, sleep } from "../utils";
+import { usePrevious } from "../utils/hooks";
 
 type CallBackOnClick = (e: React.MouseEvent, i: number, j: number) => void;
 
@@ -20,6 +22,7 @@ interface BoardProps {
 interface GridProps {
   table: Array<string[]>;
   onBoxClick: CallBackOnClick;
+  nextColor: string;
 }
 
 interface BoxProps {
@@ -27,15 +30,46 @@ interface BoxProps {
   i: number;
   j: number;
   onBoxClick: CallBackOnClick;
+  nextColor: string;
 }
 
 const Box = (props: BoxProps) => {
+  const [mustAnimateForColorChange, setMustAnimateForColorChange] = useState(
+    {}
+  );
+  const prevColor = usePrevious(props.color);
+  const mustAnimateForUserSelect =
+    !(props.color === props.nextColor) && props.color == "#c8cbbf";
+
+  const whileTap = mustAnimateForUserSelect
+    ? {
+        scale: 0.8,
+        rotate: -90,
+        borderRadius: "100%",
+        backgroundColor: props.nextColor,
+      }
+    : {};
+  const whileHover = mustAnimateForUserSelect
+    ? { scale: 1.2, rotate: 90, backgroundColor: props.nextColor }
+    : {};
+  const animate =
+    prevColor !== "#c8cbbf" && props.color !== prevColor
+      ? { rotate: 180, scale: 1, backgroundColor: props.color }
+      : {};
   return (
-    <div
-      key={`table-${props.i}-${props.j}`}
+    <motion.div
+      className={`flex justify-center items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border rounded-3xl`}
+      style={{ backgroundColor: props.color }}
+      whileHover={whileHover}
+      animate={animate}
       onClick={(e) => props.onBoxClick(e, props.i, props.j)}
-      className={`flex justify-center ${props.color} items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border`}
+      whileTap={whileTap}
     />
+    // <div
+    //   key={`table-${props.i}-${props.j}`}
+    //   onClick={(e) => props.onBoxClick(e, props.i, props.j)}
+    //   className={`flex justify-center ${props.color} items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border`}
+    // />
   );
 };
 
@@ -45,10 +79,12 @@ const GridBoard = (props: GridProps) => {
     for (let j = 0; j < props.table[i].length; j++) {
       boxes.push(
         <Box
+          key={`grid-board-box-${i}-${j}`}
           color={props.table[i][j]}
           i={i}
           j={j}
           onBoxClick={props.onBoxClick}
+          nextColor={props.nextColor}
         />
       );
     }
@@ -217,18 +253,32 @@ export const Board = (props: BoardProps) => {
         tabIndex={0}
         className="flex flex-col h-screen justify-evenly items-center border-0 focus:outline-none noselect"
       >
-        <GridBoard table={props.table} onBoxClick={onClick} />
+        <GridBoard table={props.table} onBoxClick={onClick} nextColor={color} />
         <Grid>
           <Grid.Col span={4}>
-            <div
-              className={`flex justify-center ${props.turnColor[0]} items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border`}
+            <motion.div
+              whileHover={{ scale: 1.2, rotate: 90 }}
+              whileTap={{
+                scale: 0.8,
+                rotate: -90,
+                borderRadius: "100%",
+              }}
+              className={`flex justify-center items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border rounded-3xl`}
+              style={{ backgroundColor: props.turnColor[0] }}
               onClick={(e) => setColorOnClick(e, props.turnColor[0])}
             />
           </Grid.Col>
           <Grid.Col span={4} />
           <Grid.Col span={4}>
-            <div
-              className={`flex justify-center ${props.turnColor[1]} items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border`}
+            <motion.div
+              whileHover={{ scale: 1.2, rotate: 90 }}
+              whileTap={{
+                scale: 0.8,
+                rotate: -90,
+                borderRadius: "100%",
+              }}
+              className={`flex justify-center items-center w-20 h-20 lg:w-24 lg:h-24 text-white sm:text-2xl lg:text-6xl font-semibold border-solid border rounded-3xl`}
+              style={{ backgroundColor: props.turnColor[1] }}
               onClick={(e) => setColorOnClick(e, props.turnColor[1])}
             />
           </Grid.Col>

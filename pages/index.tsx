@@ -5,8 +5,8 @@ import { Board } from "../components/board";
 import { PlayersName } from "../components/players-name";
 
 const Home: NextPage = () => {
-  const colors = ["bg-red-600", "bg-purple-700"];
-  const baseColor = "bg-orange-300";
+  const colors = ["#65816d", "#bd7423"];
+  const baseColor = "#c8cbbf";
   const [firstPlayerName, setFirstPlayerName] = useState("");
   const [secondPlayerName, setSecondPlayerName] = useState("");
   const [playersScore, setPlayserScore] = useState([0, 0]);
